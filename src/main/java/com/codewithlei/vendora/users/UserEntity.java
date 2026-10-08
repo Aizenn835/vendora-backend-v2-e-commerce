@@ -1,6 +1,8 @@
 package com.codewithlei.vendora.users;
 
-import com.codewithlei.vendora.users.enums.Roles;
+import com.codewithlei.vendora.seller.SellerProfileEntity;
+import com.codewithlei.vendora.users.enums.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,10 +15,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class UsersEntity {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String username;
 
     @Column(name = "profile_img")
     private String pfpUrl;
@@ -34,13 +39,16 @@ public class UsersEntity {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Roles roles;
+    private Role role;
 
     @Column(name = "created_at" , updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "user")
+    private SellerProfileEntity sellerProfile;
 
     @PrePersist
     void onCreate(){
@@ -50,6 +58,13 @@ public class UsersEntity {
     @PreUpdate
     void onUpdate(){
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void promoteToSeller(){
+        if(role != Role.CUSTOMER){
+            throw new IllegalStateException("Only customers can be promoted to seller.");
+        }
+        this.role = Role.SELLER;
     }
 
 }

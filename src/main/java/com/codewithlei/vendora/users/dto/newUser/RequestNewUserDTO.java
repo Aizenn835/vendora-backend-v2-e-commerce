@@ -12,6 +12,10 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestNewUserDTO {
 
+    @NotBlank(message = "Username cannot be empty, null, or only whitespace")
+    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
+    private String username;
+
     @NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name must be under 50 characters")
     private String firstname;
