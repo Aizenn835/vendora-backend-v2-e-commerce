@@ -2,10 +2,8 @@ package com.codewithlei.vendora.users;
 
 import com.codewithlei.vendora.seller.SellerProfileEntity;
 import com.codewithlei.vendora.users.enums.Role;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity

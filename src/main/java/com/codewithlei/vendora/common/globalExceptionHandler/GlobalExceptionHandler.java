@@ -1,5 +1,6 @@
 package com.codewithlei.vendora.common.globalExceptionHandler;
 
+import com.codewithlei.vendora.product.exception.NullProductImageException;
 import com.codewithlei.vendora.seller.exception.InvalidSellerStatusException;
 import com.codewithlei.vendora.seller.exception.SellerAlreadyExistException;
 import com.codewithlei.vendora.seller.exception.SellerProfileNotFound;
@@ -78,6 +79,18 @@ public class GlobalExceptionHandler {
                 .localDateTime(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(error);
+    }
+
+    // product exception
+    @ExceptionHandler(NullProductImageException.class)
+    public ResponseEntity<?> handleInvalidProductImg(NullProductImageException e){
+        ErrorResponse error = ErrorResponse.builder()
+                .status(400)
+                .message(e.getMessage())
+                .localDateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
 }

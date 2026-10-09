@@ -15,7 +15,12 @@ import com.codewithlei.vendora.users.UserRepository;
 import com.codewithlei.vendora.users.enums.Role;
 import com.codewithlei.vendora.users.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,32 +33,43 @@ public class SellerService {
    private final UserRepository userRepository;
    private final ImageService imageService;
    private final SellerMapper sellerMapper;
+   private static final Logger log = LoggerFactory.getLogger(SellerService.class);
 
-   public void apply(String email ,
-                     RequestNewSellerDTO request ,
-                     MultipartFile file) throws IOException {
 
-       sellerValidation.validateSellerPfp(file);
-       sellerValidation.validateShopName(request.getShopName());
+    @Transactional(rollbackFor = Exception.class)
+    public void apply(String email, RequestNewSellerDTO request, MultipartFile file) throws IOException {
+        sellerValidation.validateSellerPfp(file);
+        sellerValidation.validateShopName(request.getShopName());
 
-       UserEntity user = userRepository.findByEmail(email)
-               .orElseThrow(UserNotFoundException::new);
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
 
-       if(user.getRole() == Role.ADMIN || user.getRole() == Role.SELLER){
-           throw new InvalidSellerStatusException("Only customers can request approval.");
-       }
+        if(user.getRole() != Role.CUSTOMER){
+            throw new InvalidSellerStatusException("Only customers can request approval.");
+        }
 
-       String shopPfp = imageService.uploadPfp(file , "seller-profile");
+        String shopPfp = imageService.upload(file, "seller-profile");
+        deleteImageIfRolledBack(shopPfp);
 
-       try{
-           SellerProfileEntity seller = sellerMapper.mapToDTO(shopPfp , user , request);
-           seller.setSellerStatus(SellerStatus.PENDING);
-           sellerRepository.save(seller);
-       }catch(RuntimeException e){
-           imageService.deleteImage(shopPfp);
-           throw(e);
-       }
-   }
+        SellerProfileEntity seller = sellerMapper.mapToEntity(shopPfp, user, request);
+        seller.setSellerStatus(SellerStatus.PENDING);
+        sellerRepository.save(seller);
+    }
+
+    private void deleteImageIfRolledBack(String imgUrl) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status == STATUS_ROLLED_BACK) {
+                    try {
+                        imageService.deleteImage(imgUrl);
+                    } catch (RuntimeException e) {
+                        log.warn("Failed to delete orphaned image {}", imgUrl, e);
+                    }
+                }
+            }
+        });
+    }
 
    public ResponseSellerDataDTO applicationStatus(String email){
        UserEntity user = userRepository.findByEmail(email)

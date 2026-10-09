@@ -19,7 +19,7 @@ public class ImageService {
         this.uploadRoot = Paths.get(uploadDir).toAbsolutePath().normalize();
     }
 
-    public String uploadPfp(MultipartFile file, String dir) throws IOException {
+    public String upload(MultipartFile file, String dir) throws IOException {
         String extension = getExtension(file.getOriginalFilename());
         String fileName = UUID.randomUUID() + extension;
 

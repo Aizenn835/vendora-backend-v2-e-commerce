@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
     public UserEntity mapToEntity(RequestNewUserDTO request){
         return UserEntity.builder()
+                .username(request.getUsername())
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())

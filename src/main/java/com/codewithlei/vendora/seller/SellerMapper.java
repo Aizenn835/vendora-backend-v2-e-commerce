@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SellerMapper {
-    public SellerProfileEntity mapToDTO(String shopPfp , UserEntity user, RequestNewSellerDTO request){
+    public SellerProfileEntity mapToEntity(String shopPfp , UserEntity user, RequestNewSellerDTO request){
         return SellerProfileEntity.builder()
                 .user(user)
                 .shopPfp(shopPfp)

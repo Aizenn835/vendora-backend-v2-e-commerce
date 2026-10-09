@@ -4,7 +4,6 @@ import com.codewithlei.vendora.seller.enums.SellerStatus;
 import com.codewithlei.vendora.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -52,8 +51,13 @@ public class SellerProfileEntity {
     public void onUpdate(){
         this.updatedAt = LocalDateTime.now();
     }
+
     public void approve(){
         this.sellerStatus = SellerStatus.APPROVED;
+    }
+
+    public void rejected(){
+        this.sellerStatus = SellerStatus.REJECTED;
     }
 
     public void suspend(){
