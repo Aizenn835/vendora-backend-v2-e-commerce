@@ -6,6 +6,7 @@ import com.codewithlei.vendora.product.ProductEntity;
 import com.codewithlei.vendora.product.ProductMapper;
 import com.codewithlei.vendora.product.ProductRepository;
 import com.codewithlei.vendora.product.dto.newProduct.RequestNewProductDTO;
+import com.codewithlei.vendora.product.dto.productData.ResponseProductDTO;
 import com.codewithlei.vendora.seller.SellerProfileEntity;
 import com.codewithlei.vendora.seller.SellerRepository;
 import com.codewithlei.vendora.seller.enums.SellerStatus;
@@ -14,6 +15,8 @@ import com.codewithlei.vendora.seller.exception.SellerProfileNotFound;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -63,5 +66,22 @@ public class SellerProductService {
             }
         });
     }
+    public Page<ResponseProductDTO> viewSellerProduct(String email  , Pageable pageable){
+        SellerProfileEntity seller = sellerRepository.findByUser_Email(email)
+                .orElseThrow(SellerProfileNotFound::new);
+
+        return productRepository.findByIsActive(seller , pageable)
+                .map(data -> ResponseProductDTO.builder()
+                        .id(data.getId())
+                        .productImgUrl(data.getProductImgUrl())
+                        .productName(data.getProductName())
+                        .description(data.getDescription())
+                        .price(data.getPrice())
+                        .stock(data.getStock())
+                        .build());
+
+
+    }
+
 
 }

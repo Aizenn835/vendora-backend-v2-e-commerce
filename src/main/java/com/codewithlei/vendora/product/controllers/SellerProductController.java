@@ -1,9 +1,13 @@
 package com.codewithlei.vendora.product.controllers;
 
+import com.codewithlei.vendora.product.dto.productData.ResponseProductDTO;
 import com.codewithlei.vendora.product.services.SellerProductService;
 import com.codewithlei.vendora.product.dto.newProduct.RequestNewProductDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,6 +32,14 @@ public class SellerProductController {
         String email = authentication.getName();
         productService.addProduct(file , email , request);
         return ResponseEntity.ok(Map.of("message" , "Successfully added!"));
+    }
+    @GetMapping
+    public Page<ResponseProductDTO> viewSellerProduct(Authentication authentication ,
+                                                      @RequestParam(defaultValue = "10") int size ,
+                                                      @RequestParam(defaultValue = "0") int page){
+        Pageable pageable = PageRequest.of(page , size);
+        String email = authentication.getName();
+        return productService.viewSellerProduct(email , pageable);
     }
 
 }
