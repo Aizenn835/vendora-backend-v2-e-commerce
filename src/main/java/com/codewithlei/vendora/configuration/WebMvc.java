@@ -1,4 +1,4 @@
-package com.codewithlei.vendora.config;
+package com.codewithlei.vendora.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

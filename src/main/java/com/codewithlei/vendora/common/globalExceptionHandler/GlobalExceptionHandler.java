@@ -1,6 +1,7 @@
 package com.codewithlei.vendora.common.globalExceptionHandler;
 
 import com.codewithlei.vendora.product.exception.NullProductImageException;
+import com.codewithlei.vendora.product.exception.ProductNotFoundException;
 import com.codewithlei.vendora.seller.exception.InvalidSellerStatusException;
 import com.codewithlei.vendora.seller.exception.SellerAlreadyExistException;
 import com.codewithlei.vendora.seller.exception.SellerProfileNotFound;
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(404)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(error);
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(400)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(error);
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(409)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(error);
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(404)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(error);
@@ -65,7 +66,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(400)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(error);
@@ -76,7 +77,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(409)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(error);
@@ -88,9 +89,20 @@ public class GlobalExceptionHandler {
         ErrorResponse error = ErrorResponse.builder()
                 .status(400)
                 .message(e.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<?> handleProductNotFound(ProductNotFoundException e){
+        ErrorResponse error = ErrorResponse.builder()
+                .status(404)
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
 }

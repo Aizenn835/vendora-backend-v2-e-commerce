@@ -1,13 +1,15 @@
 package com.codewithlei.vendora.product.dto.newProduct;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import java.math.BigDecimal;
+import java.util.List;
 
-@Data
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequestNewProductDTO {
 
     @NotBlank(message = "Product name cannot be blank.")
@@ -21,6 +23,7 @@ public class RequestNewProductDTO {
     @Min(value = 0, message = "Price must be greater than or equal to 0.")
     private BigDecimal price;
 
-    @Min(value = 0, message = "Stock cannot be negative.")
-    private int stock;
+    @NotEmpty
+    @Valid
+    private List<RequestVariantDTO> variants;
 }

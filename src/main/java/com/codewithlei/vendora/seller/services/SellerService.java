@@ -9,6 +9,7 @@ import com.codewithlei.vendora.seller.dto.newSeller.RequestNewSellerDTO;
 import com.codewithlei.vendora.seller.dto.sellerData.ResponseSellerDataDTO;
 import com.codewithlei.vendora.seller.enums.SellerStatus;
 import com.codewithlei.vendora.seller.exception.InvalidSellerStatusException;
+import com.codewithlei.vendora.seller.exception.SellerAlreadyExistException;
 import com.codewithlei.vendora.seller.exception.SellerProfileNotFound;
 import com.codewithlei.vendora.users.UserEntity;
 import com.codewithlei.vendora.users.UserRepository;
@@ -46,6 +47,10 @@ public class SellerService {
 
         if(user.getRole() != Role.CUSTOMER){
             throw new InvalidSellerStatusException("Only customers can request approval.");
+        }
+
+        if(sellerRepository.existsByUser(user)){
+            throw new SellerAlreadyExistException("Seller has a pending application.");
         }
 
         String shopPfp = imageService.upload(file, "seller-profile");

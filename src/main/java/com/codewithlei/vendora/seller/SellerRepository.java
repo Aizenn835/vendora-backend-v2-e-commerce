@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface SellerRepository extends JpaRepository<SellerProfileEntity, Long> {
     Boolean existsByShopName(String shopName);
+    Boolean existsByUser(UserEntity user);
     Optional<SellerProfileEntity> findByUser(UserEntity user);
     Optional<SellerProfileEntity> findByUser_Email(String userEmail);
     Page<SellerProfileEntity> findBySellerStatusOrderByCreatedAtDesc(SellerStatus sellerStatus , Pageable pageable);

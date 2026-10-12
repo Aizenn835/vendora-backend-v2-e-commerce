@@ -1,4 +1,4 @@
-package com.codewithlei.vendora.config;
+package com.codewithlei.vendora.configuration;
 
 import com.codewithlei.vendora.security.CustomUserDetailsService;
 import com.codewithlei.vendora.security.JwtAuthFilter;
@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/seller/product/**").hasRole("SELLER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/register" , "/api/auth/login" , "/error").permitAll()
+                        .requestMatchers("/api/user/register" , "/api/auth/login" , "/error" , "/uploads/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex

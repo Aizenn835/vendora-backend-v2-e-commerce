@@ -1,5 +1,6 @@
 package com.codewithlei.vendora.product.controllers;
 
+import com.codewithlei.vendora.product.dto.newProduct.RequestProductUpdateDTO;
 import com.codewithlei.vendora.product.dto.productData.ResponseProductDTO;
 import com.codewithlei.vendora.product.services.SellerProductService;
 import com.codewithlei.vendora.product.dto.newProduct.RequestNewProductDTO;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,6 +42,29 @@ public class SellerProductController {
         Pageable pageable = PageRequest.of(page , size);
         String email = authentication.getName();
         return productService.viewSellerProduct(email , pageable);
+    }
+    @GetMapping("/{id}")
+    public ResponseProductDTO viewSellerProductById(Authentication authentication ,
+                                                    @PathVariable("id") Long id){
+        String email = authentication.getName();
+        return productService.viewSellerProductById(email , id);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String , String>> updateSellerProduct(Authentication authentication ,
+                                                                    @PathVariable("id") Long id ,
+                                                                    @RequestBody @Valid RequestProductUpdateDTO request){
+        String email = authentication.getName();
+        productService.updateSellerProduct(email , id , request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message" , "Successfully updated"));
+    }
+    @PatchMapping(value = "/{id}" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String , String>> updateProductImage(Authentication authentication ,
+                                                                   @PathVariable("id") Long id ,
+                                                                   @RequestPart("img") MultipartFile file) throws IOException{
+        String email = authentication.getName();
+        productService.updateImage(email , id , file);
+        return ResponseEntity.ok(Map.of("message" , "Successfully change the product image."));
     }
 
 }

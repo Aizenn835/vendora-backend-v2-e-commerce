@@ -1,4 +1,4 @@
-package com.codewithlei.vendora.config;
+package com.codewithlei.vendora.configuration;
 
 import com.codewithlei.vendora.seller.SellerProfileEntity;
 import com.codewithlei.vendora.seller.SellerRepository;
@@ -38,14 +38,14 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private static final List<String> PICTURES = List.of(
-            "/uploads/seller-profile/chat-gpt.png",
-            "/uploads/seller-profile/github.png",
-            "/uploads/seller-profile/gmail.png",
-            "/uploads/seller-profile/html-5.png",
-            "/uploads/seller-profile/instagram.png",
-            "/uploads/seller-profile/spotify.png",
-            "/uploads/seller-profile/tik-tok.png",
-            "/uploads/seller-profile/whatsapp.png"
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png",
+            "/uploads/seller-profile/default-profile.png"
     );
 
     private static final List<String> FIRST_NAMES = List.of(
