@@ -1,6 +1,8 @@
 package com.codewithlei.vendora.product.controllers;
 
 import com.codewithlei.vendora.product.dto.newProduct.RequestProductUpdateDTO;
+import com.codewithlei.vendora.product.dto.newProduct.RequestUpdateStockDTO;
+import com.codewithlei.vendora.product.dto.newProduct.RequestVariantDTO;
 import com.codewithlei.vendora.product.dto.productData.ResponseProductDTO;
 import com.codewithlei.vendora.product.services.SellerProductService;
 import com.codewithlei.vendora.product.dto.newProduct.RequestNewProductDTO;
@@ -58,7 +60,7 @@ public class SellerProductController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message" , "Successfully updated"));
     }
-    @PatchMapping(value = "/{id}" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{id}/image" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String , String>> updateProductImage(Authentication authentication ,
                                                                    @PathVariable("id") Long id ,
                                                                    @RequestPart("img") MultipartFile file) throws IOException{
@@ -66,5 +68,29 @@ public class SellerProductController {
         productService.updateImage(email , id , file);
         return ResponseEntity.ok(Map.of("message" , "Successfully change the product image."));
     }
+    @PatchMapping("/{productId}/variants/{variantId}/stock")
+    public ResponseEntity<Map<String , String>> updateStockById(Authentication authentication ,
+                                                                @PathVariable("productId") Long productId ,
+                                                                @PathVariable("variantId") Long variantId ,
+                                                                @RequestBody @Valid RequestUpdateStockDTO request){
+        String email = authentication.getName();
+        productService.updateStockById(email , productId , variantId , request);
+        return ResponseEntity.ok(Map.of("message" , "Variant successfully updated."));
+    }
+    @PostMapping("/{productId}/variants")
+    public ResponseEntity<Map<String , String>> addProductVariant(Authentication authentication , @PathVariable("productId") Long productId ,
+                                                                  @RequestBody @Valid RequestVariantDTO request){
 
+        String email = authentication.getName();
+        productService.addProductVariant(email , productId , request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message" , "Variant successfully added."));
+    }
+    @DeleteMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<Void> deleteVariantSize(Authentication authentication , @PathVariable("productId") Long productId ,
+                                                  @PathVariable("variantId") Long variantId){
+        String email = authentication.getName();
+        productService.deleteVariantSize(email , productId , variantId);
+        return ResponseEntity.noContent().build();
+    }
 }

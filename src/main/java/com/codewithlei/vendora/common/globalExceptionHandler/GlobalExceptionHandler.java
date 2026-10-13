@@ -1,7 +1,9 @@
 package com.codewithlei.vendora.common.globalExceptionHandler;
 
 import com.codewithlei.vendora.product.exception.NullProductImageException;
+import com.codewithlei.vendora.product.exception.ProductAlreadyExistException;
 import com.codewithlei.vendora.product.exception.ProductNotFoundException;
+import com.codewithlei.vendora.product.exception.ProductVariantNotFoundException;
 import com.codewithlei.vendora.seller.exception.InvalidSellerStatusException;
 import com.codewithlei.vendora.seller.exception.SellerAlreadyExistException;
 import com.codewithlei.vendora.seller.exception.SellerProfileNotFound;
@@ -83,7 +85,7 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // product exception
+    // Product exception
     @ExceptionHandler(NullProductImageException.class)
     public ResponseEntity<?> handleInvalidProductImg(NullProductImageException e){
         ErrorResponse error = ErrorResponse.builder()
@@ -96,6 +98,28 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<?> handleProductNotFound(ProductNotFoundException e){
+        ErrorResponse error = ErrorResponse.builder()
+                .status(404)
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(ProductAlreadyExistException.class)
+    public ResponseEntity<?> handleProductAlreadyExist(ProductAlreadyExistException e){
+        ErrorResponse error = ErrorResponse.builder()
+                .status(409)
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(error);
+    }
+
+    @ExceptionHandler(ProductVariantNotFoundException.class)
+    public ResponseEntity<?> handleProductVariantNotFound(ProductVariantNotFoundException e){
         ErrorResponse error = ErrorResponse.builder()
                 .status(404)
                 .message(e.getMessage())

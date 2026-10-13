@@ -3,8 +3,6 @@ package com.codewithlei.vendora.product.entity;
 import com.codewithlei.vendora.seller.SellerProfileEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -86,5 +84,7 @@ public class ProductEntity {
     public void updateImg(String productImgUrl){
         this.productImgUrl = productImgUrl;
     }
-
+    public void removeVariant(ProductVariantEntity variant){
+        this.variant.remove(variant);
+    }
 }
