@@ -8,9 +8,6 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestNewUserDTO {
 
-    @NotBlank(message = "Username cannot be empty, null, or only whitespace")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
-    private String username;
 
     @NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name must be under 50 characters")
@@ -27,7 +24,7 @@ public class RequestNewUserDTO {
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 32 , message = "Password must be at least 8 characters long")
     @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$",
+            regexp = "^(?=.*[0-9!@#$%^&*(),.?\":{}|<>]).*$",
             message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@#$%^&+=!)"
     )
     private String password;

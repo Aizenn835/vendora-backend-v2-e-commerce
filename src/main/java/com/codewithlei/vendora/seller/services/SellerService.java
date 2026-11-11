@@ -1,5 +1,6 @@
 package com.codewithlei.vendora.seller.services;
 
+import com.codewithlei.vendora.common.email.EmailService;
 import com.codewithlei.vendora.common.storage.ImageService;
 import com.codewithlei.vendora.common.validation.SellerValidation;
 import com.codewithlei.vendora.seller.SellerMapper;
@@ -15,31 +16,44 @@ import com.codewithlei.vendora.users.UserEntity;
 import com.codewithlei.vendora.users.UserRepository;
 import com.codewithlei.vendora.users.enums.Role;
 import com.codewithlei.vendora.users.exception.UserNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 
 @Service
-@RequiredArgsConstructor
 public class SellerService {
    private final SellerRepository sellerRepository;
    private final SellerValidation sellerValidation;
    private final UserRepository userRepository;
    private final ImageService imageService;
    private final SellerMapper sellerMapper;
-   private static final Logger log = LoggerFactory.getLogger(SellerService.class);
+   private final String defaultPfp;
+   private final EmailService emailService;
+
+    public SellerService(SellerRepository sellerRepository, SellerValidation sellerValidation,
+                         UserRepository userRepository, ImageService imageService,
+                         SellerMapper sellerMapper , @Value("${app.default.pfp}") String defaultPfp,
+                         EmailService emailService) {
+        this.sellerRepository = sellerRepository;
+        this.sellerValidation = sellerValidation;
+        this.userRepository = userRepository;
+        this.imageService = imageService;
+        this.sellerMapper = sellerMapper;
+        this.defaultPfp = defaultPfp;
+        this.emailService = emailService;
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(SellerService.class);
+
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void apply(String email, RequestNewSellerDTO request, MultipartFile file) throws IOException {
-        sellerValidation.validateSellerPfp(file);
+    public void apply(String email, RequestNewSellerDTO request) {
         sellerValidation.validateShopName(request.getShopName());
 
         UserEntity user = userRepository.findByEmail(email)
@@ -52,13 +66,16 @@ public class SellerService {
         if(sellerRepository.existsByUser(user)){
             throw new SellerAlreadyExistException("Seller has a pending application.");
         }
-
-        String shopPfp = imageService.upload(file, "seller-profile");
-        deleteImageIfRolledBack(shopPfp);
-
-        SellerProfileEntity seller = sellerMapper.mapToEntity(shopPfp, user, request);
+        SellerProfileEntity seller = sellerMapper.mapToEntity(user, request);
         seller.setSellerStatus(SellerStatus.PENDING);
+        seller.setShopPfp(defaultPfp);
         sellerRepository.save(seller);
+
+        /*
+        I need to handle the transactional here if the seller data does not save on to the database i need to roll back
+        this operation.
+        */
+        emailService.sendSellerApplicationConfirmation(user.getFirstname() , user.getLastname() ,user.getEmail());
     }
 
     private void deleteImageIfRolledBack(String imgUrl) {
@@ -87,6 +104,9 @@ public class SellerService {
                        .description(data.getDescription())
                        .createdAt(data.getCreatedAt())
                        .sellerStatus(data.getSellerStatus())
+                       .websiteLink(data.getWebsiteLink())
+                       .shopPfp(data.getShopPfp())
+                       .sellerCategory(data.getSellerCategory())
                        .build()
                ).orElseThrow(SellerProfileNotFound::new);
    }

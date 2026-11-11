@@ -1,5 +1,6 @@
 package com.codewithlei.vendora.seller;
 
+import com.codewithlei.vendora.seller.enums.SellerCategory;
 import com.codewithlei.vendora.seller.enums.SellerStatus;
 import com.codewithlei.vendora.users.UserEntity;
 import jakarta.persistence.*;
@@ -28,8 +29,17 @@ public class SellerProfileEntity {
     @Column(name = "shop_name" , nullable = false , unique = true)
     private String shopName;
 
+    @Column(nullable = false)
+    private String phoneNumber;
+
     @Column(length = 500)
     private String description;
+
+    @Column(nullable = false)
+    private String websiteLink;
+
+    @Enumerated(EnumType.STRING)
+    private SellerCategory sellerCategory;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "seller_status")
@@ -40,6 +50,7 @@ public class SellerProfileEntity {
 
     @Column(name = "updated_at" , nullable = false)
     private LocalDateTime updatedAt;
+
 
     @PrePersist
     public void onCreate(){

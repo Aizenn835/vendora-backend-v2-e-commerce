@@ -1,5 +1,6 @@
 package com.codewithlei.vendora.seller.dto.sellerData;
 
+import com.codewithlei.vendora.seller.enums.SellerCategory;
 import com.codewithlei.vendora.seller.enums.SellerStatus;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,7 @@ public class ResponseSellerDataDTO {
     private String shopName;
     private String description;
     private SellerStatus sellerStatus;
+    private SellerCategory sellerCategory;
+    private String websiteLink;
     private LocalDateTime createdAt;
 }

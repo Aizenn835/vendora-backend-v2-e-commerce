@@ -22,12 +22,11 @@ import java.util.Map;
 public class SellerController {
     private final SellerService sellerService;
 
-    @PostMapping(value = "/apply" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/apply")
     public ResponseEntity<Map<String , String>> apply(Authentication authentication ,
-                                                      @RequestPart("dto") @Valid RequestNewSellerDTO request,
-                                                      @RequestPart("img") MultipartFile file) throws IOException {
+                                                      @RequestBody @Valid RequestNewSellerDTO request) throws IOException {
         String email = authentication.getName();
-        sellerService.apply(email , request , file);
+        sellerService.apply(email , request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message" , "Your application was successful and is waiting for approval."));
     }

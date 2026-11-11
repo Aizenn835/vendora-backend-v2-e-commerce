@@ -2,17 +2,19 @@ package com.codewithlei.vendora.configuration;
 
 import com.codewithlei.vendora.seller.SellerProfileEntity;
 import com.codewithlei.vendora.seller.SellerRepository;
+import com.codewithlei.vendora.seller.enums.SellerCategory;
 import com.codewithlei.vendora.seller.enums.SellerStatus;
 import com.codewithlei.vendora.users.UserEntity;
 import com.codewithlei.vendora.users.UserRepository;
 import com.codewithlei.vendora.users.enums.Role;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -20,22 +22,11 @@ import java.util.stream.IntStream;
 @Component
 @Profile("dev")
 public class DataSeeder implements CommandLineRunner {
-    private final SellerRepository sellerRepository;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private static final String DEFAULT_PASSWORD = "Password123!";
-    private final String defaultImg;
-
     private static final String ADMIN_EMAIL = "admin@example.com";
     private static final String ADMIN_PASSWORD = "Admin123!";
-
-    public DataSeeder(@Value("${app.default.pfp}") String defaultImg, SellerRepository sellerRepository,
-                      UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.defaultImg = defaultImg;
-        this.sellerRepository = sellerRepository;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private static final String WEBSITE = "https://example.com";
+    private static final String PHONE = "+63 917-123-4567";
 
     private static final List<String> PICTURES = List.of(
             "/uploads/seller-profile/default-profile.png",
@@ -58,23 +49,37 @@ public class DataSeeder implements CommandLineRunner {
             "Bautista", "Ramos", "Aquino", "Castillo", "Navarro", "Torres"
     );
 
-    private record SeedShop(String name, String description, SellerStatus status) {
+    private record SeedShop(String name, String description, SellerStatus status,
+                            SellerCategory sellerCategory, String websiteLink , String phoneNumber) {
     }
 
     private static final List<SeedShop> SHOPS = List.of(
-            new SeedShop("Tech Haven PH", "Gadgets, accessories, and computer peripherals at fair prices.", SellerStatus.PENDING),
-            new SeedShop("Barako Beans Co.", "Locally roasted Batangas barako coffee, whole bean and ground.", SellerStatus.APPROVED),
-            new SeedShop("Manila Sneaker Vault", "Authentic sneakers and streetwear shipped within Metro Manila.", SellerStatus.PENDING),
-            new SeedShop("Pinoy Pet Supplies", "Food, toys, and grooming essentials for dogs and cats.", SellerStatus.SUSPENDED),
-            new SeedShop("Kusina Essentials", "Cookware, utensils, and kitchen tools for the Filipino home.", SellerStatus.PENDING),
-            new SeedShop("Island Threads", "Handwoven bags and shirts made by local artisans.", SellerStatus.APPROVED),
-            new SeedShop("Gadget Galore", "Phone cases, chargers, and power banks at wholesale prices.", SellerStatus.BANNED),
-            new SeedShop("Bookworm Corner", "Secondhand novels, textbooks, and comics in good condition.", SellerStatus.PENDING),
-            new SeedShop("Fresh Harvest Direct", "Farm-fresh vegetables and fruits delivered from Antipolo.", SellerStatus.APPROVED),
-            new SeedShop("Glow Up Beauty", "Skincare and cosmetics from trusted local brands.", SellerStatus.PENDING),
-            new SeedShop("Game On Collectibles", "Board games, trading cards, and action figures.", SellerStatus.SUSPENDED),
-            new SeedShop("Home Nest Decor", "Affordable furniture and home decor for small spaces.", SellerStatus.PENDING)
+            new SeedShop("Tech Haven PH", "Gadgets, accessories, and computer peripherals at fair prices.", SellerStatus.PENDING, SellerCategory.BEAUTY_AND_WELLNESS, WEBSITE , PHONE),
+            new SeedShop("Barako Beans Co.", "Locally roasted Batangas barako coffee, whole bean and ground.", SellerStatus.APPROVED, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Manila Sneaker Vault", "Authentic sneakers and streetwear shipped within Metro Manila.", SellerStatus.PENDING, SellerCategory.CLOTHING_ACCESSORIES, WEBSITE , PHONE),
+            new SeedShop("Pinoy Pet Supplies", "Food, toys, and grooming essentials for dogs and cats.", SellerStatus.SUSPENDED, SellerCategory.FOOD_AND_DRINK, WEBSITE , PHONE),
+            new SeedShop("Kusina Essentials", "Cookware, utensils, and kitchen tools for the Filipino home.", SellerStatus.PENDING, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Island Threads", "Handwoven bags and shirts made by local artisans.", SellerStatus.APPROVED, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Gadget Galore", "Phone cases, chargers, and power banks at wholesale prices.", SellerStatus.BANNED, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Bookworm Corner", "Secondhand novels, textbooks, and comics in good condition.", SellerStatus.PENDING, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Fresh Harvest Direct", "Farm-fresh vegetables and fruits delivered from Antipolo.", SellerStatus.APPROVED, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Glow Up Beauty", "Skincare and cosmetics from trusted local brands.", SellerStatus.PENDING, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Game On Collectibles", "Board games, trading cards, and action figures.", SellerStatus.SUSPENDED, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE),
+            new SeedShop("Home Nest Decor", "Affordable furniture and home decor for small spaces.", SellerStatus.PENDING, SellerCategory.ART_AND_STATIONERY, WEBSITE , PHONE)
     );
+
+    private final SellerRepository sellerRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final String defaultImg;
+
+    public DataSeeder(@Value("${app.default.pfp}") String defaultImg, SellerRepository sellerRepository,
+                      UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.defaultImg = defaultImg;
+        this.sellerRepository = sellerRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
@@ -91,7 +96,6 @@ public class DataSeeder implements CommandLineRunner {
 
         UserEntity admin = UserEntity.builder()
                 .pfpUrl(defaultImg)
-                .username("admin")
                 .firstname("System")
                 .lastname("Admin")
                 .email(ADMIN_EMAIL)
@@ -131,7 +135,6 @@ public class DataSeeder implements CommandLineRunner {
 
         return UserEntity.builder()
                 .pfpUrl(defaultImg)
-                .username("seller" + number)
                 .firstname(FIRST_NAMES.get(index % FIRST_NAMES.size()))
                 .lastname(LAST_NAMES.get(index % LAST_NAMES.size()))
                 .email("seller" + number + "@example.com")
@@ -140,13 +143,16 @@ public class DataSeeder implements CommandLineRunner {
                 .build();
     }
 
-    private SellerProfileEntity buildSeller(UserEntity user, SeedShop shop, String picture) {
+    private SellerProfileEntity buildSeller(UserEntity user, SeedShop shop, String picture ) {
         return SellerProfileEntity.builder()
                 .user(user)
                 .shopPfp(picture)
                 .shopName(shop.name())
+                .phoneNumber(shop.phoneNumber)
                 .description(shop.description())
                 .sellerStatus(shop.status())
+                .sellerCategory(shop.sellerCategory)
+                .websiteLink(shop.websiteLink)
                 .build();
     }
 }
