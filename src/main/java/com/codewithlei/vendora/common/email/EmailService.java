@@ -31,7 +31,7 @@ public class EmailService {
             or contact our support team.
 
             Best regards,
-            The Vendora Team
+            The Vendora Marketplace Team
             """.formatted(firstname , lastname));
         mailSender.send(mail);
     }

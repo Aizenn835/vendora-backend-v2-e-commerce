@@ -1,6 +1,6 @@
 package com.codewithlei.vendora.seller.services;
 
-import com.codewithlei.vendora.common.email.EmailService;
+import com.codewithlei.vendora.common.email.RequestEmailDTO;
 import com.codewithlei.vendora.common.storage.ImageService;
 import com.codewithlei.vendora.common.validation.SellerValidation;
 import com.codewithlei.vendora.seller.SellerMapper;
@@ -19,6 +19,8 @@ import com.codewithlei.vendora.users.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -33,24 +35,22 @@ public class SellerService {
    private final ImageService imageService;
    private final SellerMapper sellerMapper;
    private final String defaultPfp;
-   private final EmailService emailService;
+   private final ApplicationEventPublisher eventPublisher;
 
     public SellerService(SellerRepository sellerRepository, SellerValidation sellerValidation,
                          UserRepository userRepository, ImageService imageService,
                          SellerMapper sellerMapper , @Value("${app.default.pfp}") String defaultPfp,
-                         EmailService emailService) {
+                         ApplicationEventPublisher eventPublisher) {
         this.sellerRepository = sellerRepository;
         this.sellerValidation = sellerValidation;
         this.userRepository = userRepository;
         this.imageService = imageService;
         this.sellerMapper = sellerMapper;
         this.defaultPfp = defaultPfp;
-        this.emailService = emailService;
+        this.eventPublisher = eventPublisher;
     }
 
     private static final Logger log = LoggerFactory.getLogger(SellerService.class);
-
-
 
     @Transactional(rollbackFor = Exception.class)
     public void apply(String email, RequestNewSellerDTO request) {
@@ -70,12 +70,7 @@ public class SellerService {
         seller.setSellerStatus(SellerStatus.PENDING);
         seller.setShopPfp(defaultPfp);
         sellerRepository.save(seller);
-
-        /*
-        I need to handle the transactional here if the seller data does not save on to the database i need to roll back
-        this operation.
-        */
-        emailService.sendSellerApplicationConfirmation(user.getFirstname() , user.getLastname() ,user.getEmail());
+        eventPublisher.publishEvent(new RequestEmailDTO(user.getEmail() , user.getFirstname() , user.getLastname()));
     }
 
     private void deleteImageIfRolledBack(String imgUrl) {
