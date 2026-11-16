@@ -19,7 +19,7 @@ public class SellerValidation {
     }
     public void validateShopName(String shopName){
         if(sellerRepository.existsByShopName(shopName) || shopName.isEmpty()){
-            throw new SellerAlreadyExistException("Seller already exist!");
+            throw new SellerAlreadyExistException("Shop name already exist!");
         }
     }
 }

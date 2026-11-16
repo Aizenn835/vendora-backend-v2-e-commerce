@@ -66,6 +66,7 @@ public class SellerService {
         if(sellerRepository.existsByUser(user)){
             throw new SellerAlreadyExistException("Seller has a pending application.");
         }
+
         SellerProfileEntity seller = sellerMapper.mapToEntity(user, request);
         seller.setSellerStatus(SellerStatus.PENDING);
         seller.setShopPfp(defaultPfp);
