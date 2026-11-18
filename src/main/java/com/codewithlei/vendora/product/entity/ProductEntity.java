@@ -28,6 +28,10 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariantEntity> variant = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<ProductImageEntity> imageLink = new ArrayList<>();
+
     @Column(name = "product_img")
     private String productImgUrl;
 
@@ -69,6 +73,14 @@ public class ProductEntity {
                 .build();
 
         this.variant.add(variants);
+    }
+    public void addImage(String imageLink){
+        ProductImageEntity image = ProductImageEntity.builder()
+                .product(this)
+                .imageLink(imageLink)
+                .build();
+
+        this.imageLink.add(image);
     }
     public void update(String productName , String description , BigDecimal price){
         this.productName = productName;
