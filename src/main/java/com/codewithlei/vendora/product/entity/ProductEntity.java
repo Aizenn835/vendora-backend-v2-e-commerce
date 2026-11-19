@@ -28,6 +28,7 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariantEntity> variant = new ArrayList<>();
 
+    // this can be useful if later ill add multiple image for the products
     @Builder.Default
     @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL , orphanRemoval = true)
     private List<ProductImageEntity> imageLink = new ArrayList<>();

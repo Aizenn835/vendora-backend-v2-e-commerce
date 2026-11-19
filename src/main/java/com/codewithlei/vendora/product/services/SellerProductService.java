@@ -35,6 +35,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class SellerProductService {
     @Transactional(rollbackFor = Exception.class)
     public void addProduct(MultipartFile file, String email, RequestNewProductDTO request) throws IOException {
         productValidation.validateProductImg(file);
+
 
         SellerProfileEntity seller = sellerRepository.findByUser_Email(email)
                 .orElseThrow(SellerProfileNotFound::new);

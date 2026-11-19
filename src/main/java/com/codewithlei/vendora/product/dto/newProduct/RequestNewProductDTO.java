@@ -23,6 +23,10 @@ public class RequestNewProductDTO {
     @Min(value = 0, message = "Price must be greater than or equal to 0.")
     private BigDecimal price;
 
+//    @NotEmpty
+//    @Valid
+//    private List<RequestProductImageUrl> imageLinks;
+
     @NotEmpty
     @Valid
     private List<RequestVariantDTO> variants;

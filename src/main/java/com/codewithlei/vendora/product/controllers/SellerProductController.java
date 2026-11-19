@@ -8,6 +8,7 @@ import com.codewithlei.vendora.product.services.SellerProductService;
 import com.codewithlei.vendora.product.dto.newProduct.RequestNewProductDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/api/seller/product")
 @RequiredArgsConstructor
 @Validated
+
 public class SellerProductController {
     private final SellerProductService productService;
 
